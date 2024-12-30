@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendation System</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <h1>Recommendation System</h1>
+
+    <!-- Category selection form -->
+    <form id="category-form">
+        <label for="category">Enter a category:</label>
+        <input type="text" id="category" name="category" required>
+
+        <label for="recommendation_type">Select recommendation type:</label>
+        <select id="recommendation_type" name="recommendation_type">
+            <option value="content_based">Content-Based</option>
+            <option value="collaborative">Collaborative</option>
+            <option value="hybrid">Hybrid</option>
+        </select>
+
+        <label for="top_n">Top N recommendations:</label>
+        <input type="number" id="top_n" name="top_n" value="5" min="1" required>
+
+        <button type="submit">Get Recommendations</button>
+    </form>
+
+    <h2>Recommendations:</h2>
+    <ul id="recommendations-list"></ul>
+
+    <script>
+        $(document).ready(function() {
+            // Handle form submission using AJAX
+            $('#category-form').submit(function(event) {
+                event.preventDefault();  // Prevent the form from submitting normally
+
+                const category = $('#category').val();
+                const recommendation_type = $('#recommendation_type').val();
+                const top_n = $('#top_n').val();
+
+                // Send AJAX request to Django view
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "get_recommendations" %}',
+                    data: {
+                        category: category,
+                        recommendation_type: recommendation_type,
+                        top_n: top_n,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        $('#recommendations-list').empty();  // Clear previous recommendations
+                        if (response.recommendations.length > 0) {
+                            // Display recommendations
+                            response.recommendations.forEach(function(asset) {
+                                $('#recommendations-list').append('<
+                                    <li>' + asset.Title + ' (Asset ID: ' + asset.AssetID + ') - Rating: ' + asset['User rating'] + '</li>');
+                                });
+                            } else {
+                                $('#recommendations-list').append('<li>No recommendations found.</li>');
+                            }
+                        },
+                        error: function(xhr, errmsg, err) {
+                            alert('Error: ' + errmsg);
+                        }
+                    });
+                });
+            });
+        </script>
+    
+    </body>
+    </html>
+    

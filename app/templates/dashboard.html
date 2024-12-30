@@ -1,0 +1,41 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Dashboard</title>
+    <style>
+        .transaction {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .fraud {
+            color: red;
+            font-weight: bold;
+        }
+        .no-fraud {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Transaction Dashboard</h1>
+    <div id="dashboard">
+        {% for transaction in transactions %}
+            <div class="transaction">
+                <p><strong>Transaction ID:</strong> {{transaction.txHash}} </p>            
+                <p><strong>Fraud Status:</strong> 
+                    {% if transaction.fraud_notification == "Fraud Detected!" %}
+                        <span class="fraud">{{ transaction.fraud_notification }}</span>
+                    {% else %}
+                        <span class="no-fraud">{{ transaction.fraud_notification }}</span>
+                    {% endif %}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
